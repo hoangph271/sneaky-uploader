@@ -95,15 +95,15 @@ export function createServer (): { server: http.Server, setServerConfig (config:
       const filePath = path.join(ConfigManager.getDataPath(), filename)
       const ws = fs.createWriteStream(filePath)
 
-      notifyFileUploadChanged({ filename, progress: 0 })
+      notifyFileUploadChanged({ filename, progress: 0, filePath })
 
       file
         .pipe(ws)
         .once('finish', () => {
-          notifyFileUploadChanged({ filename, progress: 100 })
+          notifyFileUploadChanged({ filename, progress: 100, filePath })
         })
         .once('error', () => {
-          notifyFileUploadChanged({ filename, progress: -1 })
+          notifyFileUploadChanged({ filename, progress: -1, filePath })
         })
     })
 

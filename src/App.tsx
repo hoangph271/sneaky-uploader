@@ -43,12 +43,23 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
   return (
     <div className={className}>
       <label>
-        <input type="text" value={serverConfig.dataPath} readOnly />
+        <input
+          type="text"
+          style={{ cursor: 'pointer' }}
+          onClick={(e) => {
+            e.preventDefault()
+            window.open(`file://${serverConfig.dataPath}`)
+          }}
+          value={serverConfig.dataPath}
+          readOnly
+        />
         <button
           onClick={() => {
             socket.emit('@change-data-path')
           }}
-        >Set data path</button>
+        >
+          {'Set data path'}
+        </button>
       </label>
     </div>
   )
@@ -103,7 +114,16 @@ const UploadDashboard: FC<StyledProp> = ({ className }) => {
             <span>{fileUpload.progress === 100 ? '✅' : '⏳'}</span>
           )}
           <span>{'-'}</span>
-          <span>{fileUpload.filename}</span>
+          <span onClick={e => {
+            e.preventDefault()
+
+            const fileUrl = `file://${fileUpload.filePath}`
+
+            console.info(fileUrl)
+            window.open(fileUrl)
+          }}>
+            {fileUpload.filename}
+          </span>
         </li>
       ))}
     </ul>

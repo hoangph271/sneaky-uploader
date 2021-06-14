@@ -9,5 +9,6 @@ export type ServerConfig = {
 
 export type FileUploadProgress = {
   filename: string,
+  filePath: string,
   progress: number
 }
