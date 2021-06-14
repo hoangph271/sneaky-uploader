@@ -56,7 +56,11 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
 const StyledConfigManager = styled(ConfigManager)`
   label {
     display: flex;
-    flex-direction: column;
+    padding: 0 0.2rem;
+
+    input {
+      flex-grow: 1;
+    }
   }
 `
 
@@ -83,6 +87,12 @@ const useFileUploads = () => {
 }
 const UploadDashboard: FC<StyledProp> = ({ className }) => {
   const { fileUploads } = useFileUploads()
+
+  if (!fileUploads.length) {
+    return (
+      <div>{'No upload...! 🤔'}</div>
+    )
+  }
 
   return (
     <ul className={className}>
