@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import * as ReactDOM from 'react-dom'
-import { ServerConfig, ServerState } from './types'
+import styled from 'styled-components'
+import { FileUploadProgress, ServerConfig, ServerState } from './types'
 import { io } from 'socket.io-client'
 
 const socket = io('http://localhost:8081/')
@@ -26,7 +27,11 @@ const useServerState = () => {
   return { serverState }
 }
 
-const ConfigManager = () => {
+type StyledProp = {
+  className?: string
+}
+
+const ConfigManager: FC<StyledProp> = ({ className }) => {
   const { serverConfig } = useServerConfig()
 
   if (!serverConfig) {
@@ -36,7 +41,7 @@ const ConfigManager = () => {
   }
 
   return (
-    <div>
+    <div className={className}>
       <label>
         <input type="text" value={serverConfig.dataPath} readOnly />
         <button
@@ -48,6 +53,57 @@ const ConfigManager = () => {
     </div>
   )
 }
+const StyledConfigManager = styled(ConfigManager)`
+  label {
+    display: flex;
+    flex-direction: column;
+  }
+`
+
+const useFileUploads = () => {
+  const [fileUploads, setFileUploads] = useState<FileUploadProgress[]>([])
+
+  useEffect(() => {
+    socket.on('@file-upload-changed', (changedFileUpload: FileUploadProgress) => setFileUploads(fileUploads => {
+      const existsIndex = fileUploads.findIndex(fileUpload => fileUpload.filename === changedFileUpload.filename)
+
+      if (existsIndex !== -1) {
+        fileUploads[existsIndex] = changedFileUpload
+
+        return [...fileUploads]
+      } else {
+        return [...fileUploads, changedFileUpload]
+      }
+    }))
+  })
+
+  return {
+    fileUploads
+  }
+}
+const UploadDashboard: FC<StyledProp> = ({ className }) => {
+  const { fileUploads } = useFileUploads()
+
+  return (
+    <ul className={className}>
+      {fileUploads.map(fileUpload => (
+        <li key={fileUpload.filename}>
+          {fileUpload.progress < 0 ? (
+            <span>{'❌'}</span>
+          ) : (
+            <span>{fileUpload.progress === 100 ? '✅' : '⏳'}</span>
+          )}
+          <span>{'-'}</span>
+          <span>{fileUpload.filename}</span>
+        </li>
+      ))}
+    </ul>
+  )
+}
+const StyledUploadDashboard = styled(UploadDashboard)`
+
+`
+
 const App = () => {
   const { serverState } = useServerState()
 
@@ -58,11 +114,16 @@ const App = () => {
       ) : (
         <div>
           <span>{'API server is running...! 🚀'}</span>
-          <ConfigManager />
+          <StyledConfigManager />
+          <hr />
+          <StyledUploadDashboard />
         </div>
       )}
     </div>
   )
 }
 
-ReactDOM.render(<App />, document.querySelector('#app'))
+const StyledApp = styled(App)`
+`
+
+ReactDOM.render(<StyledApp />, document.querySelector('#app'))
