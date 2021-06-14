@@ -4,6 +4,9 @@ module.exports = {
    * that runs in the main process.
    */
   entry: './src/index.ts',
+  node: {
+    __dirname: false,
+  },
   // Put your normal webpack config below here
   module: {
     rules: require('./webpack.rules'),
@@ -11,4 +14,4 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.json']
   },
-};
+}

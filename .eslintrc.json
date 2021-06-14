@@ -26,6 +26,7 @@
     }
   },
   "rules": {
-    "semi": ["error", "never"]
+    "semi": ["error", "never"],
+    "quotes": ["error", "single", { "avoidEscape": true, "allowTemplateLiterals": false }]
   }
 }
