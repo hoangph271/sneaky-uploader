@@ -56,7 +56,6 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
 const StyledConfigManager = styled(ConfigManager)`
   label {
     display: flex;
-    padding: 0 0.2rem;
 
     input {
       flex-grow: 1;
@@ -114,11 +113,11 @@ const StyledUploadDashboard = styled(UploadDashboard)`
 
 `
 
-const App = () => {
+const App: FC<StyledProp> = ({ className }) => {
   const { serverState } = useServerState()
 
   return (
-    <div>
+    <div className={className}>
       {serverState === ServerState.OFFLINE ? (
         <span>{'API server offline...!'}</span>
       ) : (
@@ -134,6 +133,7 @@ const App = () => {
 }
 
 const StyledApp = styled(App)`
+  padding: 0 0.2rem;
 `
 
 ReactDOM.render(<StyledApp />, document.querySelector('#app'))

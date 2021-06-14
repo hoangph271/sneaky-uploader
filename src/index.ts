@@ -13,7 +13,7 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({})
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
   const { server } = createServer()
 
