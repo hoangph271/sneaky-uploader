@@ -75,19 +75,13 @@ const StyledConfigManager = styled(ConfigManager)`
 `
 
 const useFileUploads = () => {
-  const [fileUploads, setFileUploads] = useState<FileUploadProgress[]>([])
+  const [fileUploads, setFileUploads] = useState(new Map<string, FileUploadProgress>())
 
   useEffect(() => {
-    socket.on('@file-upload-changed', (changedFileUpload: FileUploadProgress) => setFileUploads(fileUploads => {
-      const existsIndex = fileUploads.findIndex(fileUpload => fileUpload.filename === changedFileUpload.filename)
+    socket.on('@file-upload-changed', (fileUpload: FileUploadProgress) => setFileUploads(fileUploads => {
+      fileUploads.set(fileUpload.filePath, fileUpload)
 
-      if (existsIndex !== -1) {
-        fileUploads[existsIndex] = changedFileUpload
-
-        return [...fileUploads]
-      } else {
-        return [...fileUploads, changedFileUpload]
-      }
+      return new Map(fileUploads)
     }))
   })
 
@@ -98,7 +92,7 @@ const useFileUploads = () => {
 const UploadDashboard: FC<StyledProp> = ({ className }) => {
   const { fileUploads } = useFileUploads()
 
-  if (!fileUploads.length) {
+  if (!fileUploads.size) {
     return (
       <div>{'No upload...! 🤔'}</div>
     )
@@ -106,26 +100,23 @@ const UploadDashboard: FC<StyledProp> = ({ className }) => {
 
   return (
     <ul className={className}>
-      {fileUploads.map(fileUpload => (
-        <li key={fileUpload.filename}>
-          {fileUpload.progress < 0 ? (
-            <span>{'❌'}</span>
-          ) : (
-            <span>{fileUpload.progress === 100 ? '✅' : '⏳'}</span>
-          )}
-          <span>{'-'}</span>
-          <span onClick={e => {
-            e.preventDefault()
+      {Array.from(fileUploads.keys()).map(filePath => {
+        const fileUpload = fileUploads.get(filePath)
 
-            const fileUrl = `file://${fileUpload.filePath}`
-
-            console.info(fileUrl)
-            window.open(fileUrl)
-          }}>
-            {fileUpload.filename}
-          </span>
-        </li>
-      ))}
+        return (
+          <li key={filePath}>
+            {fileUpload.progress < 0 ? (
+              <span>{'❌'}</span>
+            ) : (
+              <span>{fileUpload.progress === 100 ? '✅' : '⏳'}</span>
+            )}
+            <span>{'-'}</span>
+            <span>
+              {fileUpload.filename}
+            </span>
+          </li>
+        )
+      })}
     </ul>
   )
 }
