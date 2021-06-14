@@ -122,7 +122,14 @@ const App: FC<StyledProp> = ({ className }) => {
         <span>{'API server offline...!'}</span>
       ) : (
         <div>
-          <span>{'API server is running...! 🚀'}</span>
+          <span>{'🚀 API server is running at '}</span>
+          <a
+            href="http://localhost:8081"
+            onClick={e => {
+              e.preventDefault()
+              window.open('http://localhost:8081')
+            }}
+          >PORT 8081</a>
           <StyledConfigManager />
           <hr />
           <StyledUploadDashboard />

@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, shell } from 'electron'
 import { createServer } from './server'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
@@ -13,6 +13,11 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({})
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    shell.openExternal(url)
+    return { action: 'deny' }
+  })
+
   // mainWindow.webContents.openDevTools()
 
   const { server } = createServer()
