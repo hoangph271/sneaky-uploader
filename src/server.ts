@@ -91,7 +91,7 @@ export function startServer (): void {
         <title>Sneaky Uploader...!</title>
       </head>
       <body>
-        <form action="upload-images" method="POST" enctype="multipart/form-data">
+        <form action="images" method="POST" enctype="multipart/form-data">
           <input type="file" name="file" id="file" required multiple>
           <button type="submit">Upload</button>
         </form>
