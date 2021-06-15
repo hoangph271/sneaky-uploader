@@ -104,6 +104,7 @@ export function startServer (): void {
     const busboy = new Busboy({ headers: req.headers })
 
     busboy.on('file', (_fieldname, file, filename) => {
+      console.info(`Uploading ${filename}...!`)
       const dataPath = ConfigManager.getDataPath()
       // TODO: Async it
       if (!fs.existsSync(dataPath)) {
@@ -118,9 +119,11 @@ export function startServer (): void {
       file
         .pipe(ws)
         .once('finish', () => {
+          console.info(`Uploaded ${filename}...!`)
           notifyFileUploadChanged({ filename, progress: 100, filePath })
         })
         .once('error', () => {
+          console.info(`Failed ${filename}...!`)
           notifyFileUploadChanged({ filename, progress: -1, filePath })
         })
     })
