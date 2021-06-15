@@ -92,7 +92,13 @@ export function createServer (): { server: http.Server, setServerConfig (config:
     const busboy = new Busboy({ headers: req.headers })
 
     busboy.on('file', (_fieldname, file, filename) => {
-      const filePath = path.join(ConfigManager.getDataPath(), filename)
+      const dataPath = ConfigManager.getDataPath()
+      // TODO: Async it
+      if (!fs.existsSync(dataPath)) {
+        fs.mkdirSync(dataPath)
+      }
+
+      const filePath = path.join(dataPath, filename)
       const ws = fs.createWriteStream(filePath)
 
       notifyFileUploadChanged({ filename, progress: 0, filePath })
@@ -111,6 +117,19 @@ export function createServer (): { server: http.Server, setServerConfig (config:
 
     req.pipe(busboy)
   })
+
+  setTimeout(async () => {
+    for (let i = 0; i < 35; i++) {
+      await new Promise((resolve) => {
+        notifyFileUploadChanged({ filename: i.toString(), filePath: i.toString(), progress: 0 })
+
+        setTimeout(() => {
+          notifyFileUploadChanged({ filename: i.toString(), filePath: i.toString(), progress: 100 })
+          resolve(0)
+        }, Math.random() * 500)
+      })
+    }
+  }, 3000)
 
   const sockets: Socket[] = []
   const forEachSocket = (fn: (socket: Socket) => void) => {
