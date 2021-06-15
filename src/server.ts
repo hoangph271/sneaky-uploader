@@ -11,6 +11,7 @@ import { FileUploadProgress, ServerConfig } from './types'
 
 const APP_DATA = path.join(os.homedir(), 'sneaky-uploader')
 const CONFIG_PATH = path.join(APP_DATA, 'config.json')
+const defaultDataPath = path.join(os.homedir(), 'Pictures')
 
 if (!fs.existsSync(APP_DATA)) {
   fs.mkdirSync(APP_DATA)
@@ -30,7 +31,7 @@ const ConfigManager = {
     } catch (error) {
       if (error.code === 'ENOENT') {
         const serverConfig = {
-          dataPath: path.join(APP_DATA, 'uploads')
+          dataPath: defaultDataPath
         }
 
         fs.writeFileSync(CONFIG_PATH, JSON.stringify(serverConfig, null, 2), 'utf-8')
