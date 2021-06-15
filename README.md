@@ -12,3 +12,6 @@ You can scan the QR Code for server configs
 
 `POST` `http://localhost:8081/images` with `multipart/form-data` body to upload files  
 (multiple file uploading is also supported)
+
+
+You can also find an upload form here: [http://localhost:8081/](http://localhost:8081/)
