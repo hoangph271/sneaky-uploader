@@ -13,7 +13,7 @@ const useFileUploads = () => {
 
       return new Map(fileUploads)
     }))
-  })
+  }, [])
 
   return {
     fileUploads
