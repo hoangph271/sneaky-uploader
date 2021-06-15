@@ -29,29 +29,45 @@ const UploadDashboard: FC<StyledProp> = ({ className }) => {
   }
 
   return (
-    <ul className={className}>
-      {Array.from(fileUploads.keys()).map(filePath => {
-        const fileUpload = fileUploads.get(filePath)
+    <div className={className}>
+      <div style={{ textAlign: 'center' }}>
+        {`Uploaded ${fileUploads.size} files(s)...!`}
+      </div>
+      <div className="upload-list">
+        <ul >
+          {Array.from(fileUploads.keys()).map(filePath => {
+            const fileUpload = fileUploads.get(filePath)
 
-        return (
-          <li key={filePath}>
-            {fileUpload.progress < 0 ? (
-              <span>{'❌'}</span>
-            ) : (
-              <span>{fileUpload.progress === 100 ? '✅' : '⏳'}</span>
-            )}
-            <span>{'-'}</span>
-            <span>
-              {fileUpload.filename}
-            </span>
-          </li>
-        )
-      })}
-    </ul>
+            return (
+              <li key={filePath}>
+                {fileUpload.progress < 0 ? (
+                  <span>{'❌'}</span>
+                ) : (
+                  <span>{fileUpload.progress === 100 ? '✅' : '⏳'}</span>
+                )}
+                <span>{'-'}</span>
+                <span>
+                  {fileUpload.filename}
+                </span>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
+    </div>
   )
 }
 const StyledUploadDashboard = styled(UploadDashboard)`
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  width: 100%;
 
+  .upload-list {
+    flex-basis: 0;
+    flex-grow: 1;
+    overflow: auto;
+  }
 `
 
 export { StyledUploadDashboard as UploadDashboard }

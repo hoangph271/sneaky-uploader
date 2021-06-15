@@ -63,6 +63,7 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
   )
 }
 const StyledConfigManager = styled(ConfigManager)`
+  width: 100%;
   label {
     display: flex;
 
@@ -80,15 +81,17 @@ const App: FC<StyledProp> = ({ className }) => {
       {serverState === ServerState.OFFLINE ? (
         <span>{'API server offline...!'}</span>
       ) : (
-        <div>
-          <span>{'🚀 API server is running at '}</span>
-          <a
-            href="http://localhost:8081"
-            onClick={e => {
-              e.preventDefault()
-              window.open('http://localhost:8081')
-            }}
-          >PORT 8081</a>
+        <div className="main-ui">
+          <div>
+            <span>{'🚀 API server is running at '}</span>
+            <a
+              href="http://localhost:8081"
+              onClick={e => {
+                e.preventDefault()
+                window.open('http://localhost:8081')
+              }}
+            >PORT 8081</a>
+          </div>
           <StyledConfigManager />
           <hr />
           <UploadDashboard />
@@ -100,6 +103,16 @@ const App: FC<StyledProp> = ({ className }) => {
 
 const StyledApp = styled(App)`
   padding: 0 0.2rem;
+
+  .main-ui {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    justify-content: start;
+    max-height: 100vh;
+    height: 100vh;
+  }
 `
 
 const AppWithContexts = () => {
