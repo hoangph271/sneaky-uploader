@@ -13,21 +13,32 @@ const APP_DATA = path.join(os.homedir(), 'sneaky-uploader')
 const CONFIG_PATH = path.join(APP_DATA, 'config.json')
 const defaultDataPath = path.join(os.homedir(), 'Pictures')
 
+
+const SERVER_PORT = parseInt(process.env.SERVER_PORT || '8081', 10)
+
 if (!fs.existsSync(APP_DATA)) {
   fs.mkdirSync(APP_DATA)
 }
 
+function appendNetworkConfigs (config: ServerConfig): ServerConfig {
+  return {
+    ...config,
+    pcName: os.hostname(),
+    networkInterfaces: os.networkInterfaces(),
+    serverPort: SERVER_PORT
+  }
+}
 let _config: ServerConfig = null
 const ConfigManager = {
   getConfig (): ServerConfig {
-    if (_config) return _config
+    if (_config) return appendNetworkConfigs(_config)
 
     try {
       const json = fs.readFileSync(CONFIG_PATH, 'utf-8')
 
       _config = JSON.parse(json)
 
-      return _config
+      return appendNetworkConfigs(_config)
     } catch (error) {
       if (error.code === 'ENOENT') {
         const serverConfig = {
@@ -36,7 +47,7 @@ const ConfigManager = {
 
         fs.writeFileSync(CONFIG_PATH, JSON.stringify(serverConfig, null, 2), 'utf-8')
 
-        return serverConfig
+        return appendNetworkConfigs(serverConfig as ServerConfig)
       }
 
       throw error
@@ -51,7 +62,7 @@ const ConfigManager = {
   }
 }
 
-export function createServer (): { server: http.Server, setServerConfig (config: ServerConfig): void } {
+export function startServer (): void {
   const app = express()
   const server = http.createServer(app)
   const io = new Server(server, {
@@ -62,7 +73,7 @@ export function createServer (): { server: http.Server, setServerConfig (config:
 
   app.use(cors())
 
-  app.get('/check-status', (_, res) => {
+  app.get('/status', (_, res) => {
     res.send({
       code: 200,
       pcName: os.hostname(),
@@ -89,7 +100,7 @@ export function createServer (): { server: http.Server, setServerConfig (config:
     `)
   })
 
-  app.post('/upload-images', (req, res) => {
+  app.post('/images', (req, res) => {
     const busboy = new Busboy({ headers: req.headers })
 
     busboy.on('file', (_fieldname, file, filename) => {
@@ -161,10 +172,5 @@ export function createServer (): { server: http.Server, setServerConfig (config:
     })
   })
 
-  return {
-    server,
-    setServerConfig (serverConfig: ServerConfig) {
-      ConfigManager.setConfig(serverConfig)
-    }
-  }
+  server.listen(SERVER_PORT)
 }

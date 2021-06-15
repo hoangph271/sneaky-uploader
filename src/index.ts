@@ -1,13 +1,11 @@
 import { app, BrowserWindow, shell } from 'electron'
-import { createServer } from './server'
+import { startServer } from './server'
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 
 if (require('electron-squirrel-startup')) {
   app.quit()
 }
-
-const SERVER_PORT = parseInt(process.env.SERVER_PORT || '8081', 10)
 
 const createWindow = (): void => {
   const mainWindow = new BrowserWindow({})
@@ -20,9 +18,7 @@ const createWindow = (): void => {
 
   // mainWindow.webContents.openDevTools()
 
-  const { server } = createServer()
-
-  server.listen(SERVER_PORT)
+  startServer()
 }
 
 app.on('ready', createWindow)

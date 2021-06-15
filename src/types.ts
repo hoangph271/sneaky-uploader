@@ -1,10 +1,15 @@
+import type os from 'os'
+
 export enum ServerState {
   OFFLINE,
   ONLINE,
 }
 
 export type ServerConfig = {
-  dataPath: string
+  pcName: string,
+  dataPath: string,
+  serverPort: number,
+  networkInterfaces: NodeJS.Dict<os.NetworkInterfaceInfo[]>
 }
 
 export type FileUploadProgress = {
