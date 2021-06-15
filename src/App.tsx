@@ -1,13 +1,13 @@
 import React, { FC, useEffect, useState } from 'react'
 import * as ReactDOM from 'react-dom'
 import styled from 'styled-components'
-import { FileUploadProgress, ServerConfig, ServerState } from './types'
-import { io } from 'socket.io-client'
-
-const socket = io('http://localhost:8081/')
+import { UploadDashboard } from './components/UploadDashboard'
+import { useSocketIO, SocketIOProvider } from './providers'
+import { ServerConfig, ServerState, StyledProp } from './types'
 
 const useServerConfig = () => {
   const [serverConfig, serServerConfig] = useState<ServerConfig>(null)
+  const { socket } = useSocketIO()
 
   useEffect(() => {
     socket.on('@server-config', serServerConfig)
@@ -18,6 +18,7 @@ const useServerConfig = () => {
 }
 const useServerState = () => {
   const [serverState, setServerState] = useState(ServerState.OFFLINE)
+  const { socket } = useSocketIO()
 
   useEffect(() => {
     socket.on('connect', () => setServerState(ServerState.ONLINE))
@@ -27,12 +28,9 @@ const useServerState = () => {
   return { serverState }
 }
 
-type StyledProp = {
-  className?: string
-}
-
 const ConfigManager: FC<StyledProp> = ({ className }) => {
   const { serverConfig } = useServerConfig()
+  const { socket } = useSocketIO()
 
   if (!serverConfig) {
     return (
@@ -74,56 +72,6 @@ const StyledConfigManager = styled(ConfigManager)`
   }
 `
 
-const useFileUploads = () => {
-  const [fileUploads, setFileUploads] = useState(new Map<string, FileUploadProgress>())
-
-  useEffect(() => {
-    socket.on('@file-upload-changed', (fileUpload: FileUploadProgress) => setFileUploads(fileUploads => {
-      fileUploads.set(fileUpload.filePath, fileUpload)
-
-      return new Map(fileUploads)
-    }))
-  })
-
-  return {
-    fileUploads
-  }
-}
-const UploadDashboard: FC<StyledProp> = ({ className }) => {
-  const { fileUploads } = useFileUploads()
-
-  if (!fileUploads.size) {
-    return (
-      <div>{'No upload...! 🤔'}</div>
-    )
-  }
-
-  return (
-    <ul className={className}>
-      {Array.from(fileUploads.keys()).map(filePath => {
-        const fileUpload = fileUploads.get(filePath)
-
-        return (
-          <li key={filePath}>
-            {fileUpload.progress < 0 ? (
-              <span>{'❌'}</span>
-            ) : (
-              <span>{fileUpload.progress === 100 ? '✅' : '⏳'}</span>
-            )}
-            <span>{'-'}</span>
-            <span>
-              {fileUpload.filename}
-            </span>
-          </li>
-        )
-      })}
-    </ul>
-  )
-}
-const StyledUploadDashboard = styled(UploadDashboard)`
-
-`
-
 const App: FC<StyledProp> = ({ className }) => {
   const { serverState } = useServerState()
 
@@ -143,7 +91,7 @@ const App: FC<StyledProp> = ({ className }) => {
           >PORT 8081</a>
           <StyledConfigManager />
           <hr />
-          <StyledUploadDashboard />
+          <UploadDashboard />
         </div>
       )}
     </div>
@@ -154,4 +102,12 @@ const StyledApp = styled(App)`
   padding: 0 0.2rem;
 `
 
-ReactDOM.render(<StyledApp />, document.querySelector('#app'))
+const AppWithContexts = () => {
+  return (
+    <SocketIOProvider>
+      <StyledApp />
+    </SocketIOProvider>
+  )
+}
+
+ReactDOM.render(<AppWithContexts />, document.querySelector('#app'))

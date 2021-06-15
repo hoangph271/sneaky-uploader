@@ -12,3 +12,7 @@ export type FileUploadProgress = {
   filePath: string,
   progress: number
 }
+
+export type StyledProp = {
+  className?: string
+}
