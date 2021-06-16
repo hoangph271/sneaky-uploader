@@ -4,7 +4,7 @@ import path from 'path'
 import * as os from 'os'
 import cors from 'cors'
 import express from 'express'
-import { dialog } from 'electron'
+import { dialog, shell } from 'electron'
 import { Server, Socket } from 'socket.io'
 import { SERVER_PORT } from './constants'
 import { ConfigManager } from './config-manager'
@@ -43,28 +43,29 @@ export function startServer (): void {
   io.on('connection', (socket) => {
     sockets.push(socket)
 
-    socket.on('@server-config', notifyConfigChanged)
+    socket
+      .on('@server-config', notifyConfigChanged)
+      .on('@open-data-path', () => shell.openPath(ConfigManager.getConfig().dataPath))
+      .on('@change-data-path', async () => {
+        try {
+          const [dataPath] = await dialog.showOpenDialogSync({
+            properties: [
+              'openDirectory'
+            ]
+          })
 
-    socket.on('@change-data-path', async () => {
-      try {
-        const [dataPath] = await dialog.showOpenDialogSync({
-          properties: [
-            'openDirectory'
-          ]
-        })
+          if (!dataPath) return
 
-        if (!dataPath) return
+          ConfigManager.setConfig({
+            ...ConfigManager.getConfig(),
+            dataPath
+          })
 
-        ConfigManager.setConfig({
-          ...ConfigManager.getConfig(),
-          dataPath
-        })
-
-        notifyConfigChanged()
-      } catch (error) {
-        console.error(error)
-      }
-    })
+          notifyConfigChanged()
+        } catch (error) {
+          console.error(error)
+        }
+      })
   })
 
   server.listen(SERVER_PORT)

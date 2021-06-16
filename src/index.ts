@@ -11,10 +11,6 @@ const createWindow = (): void => {
   const mainWindow = new BrowserWindow({})
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url)
-    return { action: 'deny' }
-  })
 
   mainWindow.webContents.openDevTools()
 
