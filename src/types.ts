@@ -15,9 +15,16 @@ export type ServerConfig = {
 export type FileUploadProgress = {
   filename: string,
   filePath: string,
-  progress: number
+  progress: number,
+  deviceDetail: DeviceDetail
 }
 
 export type StyledProp = {
   className?: string
+}
+
+export type DeviceDetail = JwtPayload
+export type JwtPayload = {
+  deviceId: string,
+  deviceName: string
 }
