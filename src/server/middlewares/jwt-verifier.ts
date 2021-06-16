@@ -21,9 +21,17 @@ export function jwtVerifier (req: ReqWithJwtPayload, res: Response, next: NextFu
       res
         .status(HttpStatus.UNAUTHORIZED)
         .send(err.message)
-    } else {
-      req.jwtPayload = payload
-      next()
+      return
     }
+
+    if (!payload.deviceId || !payload.deviceName) {
+      res
+        .status(HttpStatus.FORBIDDEN)
+        .send('Please provide a JWT with `deviceId` & `deviceName` included')
+      return
+    }
+
+    req.jwtPayload = payload
+    next()
   })
 }
