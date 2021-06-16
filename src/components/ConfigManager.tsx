@@ -71,7 +71,8 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
             href="http://localhost:8081"
             onClick={e => {
               e.preventDefault()
-              window.open('http://localhost:8081')
+
+              socket.emit('@open-upload-page')
             }}
           >PORT 8081</a>
         </div>

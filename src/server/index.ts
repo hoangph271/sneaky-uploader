@@ -46,9 +46,10 @@ export function startServer (): void {
     socket
       .on('@server-config', notifyConfigChanged)
       .on('@open-data-path', () => shell.openPath(ConfigManager.getConfig().dataPath))
+      .on('@open-upload-page', () => shell.openExternal(`http://localhost:${SERVER_PORT}/`))
       .on('@change-data-path', async () => {
         try {
-          const [dataPath] = await dialog.showOpenDialogSync({
+          const [dataPath] = dialog.showOpenDialogSync({
             properties: [
               'openDirectory'
             ]
