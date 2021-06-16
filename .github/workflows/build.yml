@@ -1,0 +1,15 @@
+name: Build
+on: [push]
+
+jobs:
+  build_4_macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@master
+        with:
+          node-version: 16
+      - name: install dependencies
+        run: yarn
+      - name: build
+        run: yarn package
