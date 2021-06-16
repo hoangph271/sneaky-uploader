@@ -16,7 +16,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: macos-app
-          path: out/sneaky-uploader-darwin-x64/sneaky-uploader.app
+          path: out/sneaky-uploader-darwin-x64
   build_4_windows:
     runs-on: windows-latest
     steps:
@@ -31,5 +31,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: windows-app
-          path: out/sneaky-uploader-win32-x64/sneaky-uploader.exe
-
+          path: out/sneaky-uploader-win32-x64
