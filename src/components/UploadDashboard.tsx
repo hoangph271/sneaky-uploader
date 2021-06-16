@@ -68,6 +68,7 @@ const StyledUploadDashboard = styled(UploadDashboard)`
   flex-grow: 1;
   width: calc(100% - 0.8rem);
   border: 1px solid lightgray;
+  border-radius: 0.4rem;
   margin: 0.4rem;
 
   .upload-list {
