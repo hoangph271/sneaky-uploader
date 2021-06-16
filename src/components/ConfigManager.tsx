@@ -40,11 +40,12 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
       ?.address ?? ['']
 
     const uploadUrl = `http://${serverAddress}:${serverConfig.serverPort}/images`
-
-    QRCode.toDataURL(JSON.stringify({
+    const qrData = {
       pcName: serverConfig.pcName,
       uploadUrl
-    })).then(setQrCodeUrl)
+    }
+
+    QRCode.toDataURL(JSON.stringify(qrData), { margin: 0 }).then(setQrCodeUrl)
   }, [serverConfig, interfaceKey])
 
   if (!serverConfig) {
@@ -60,10 +61,20 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
 
   return (
     <div className={className}>
-      <div className="network-config">
-        {qrCodeUrl && (
-          <img src={qrCodeUrl} />
-        )}
+      {qrCodeUrl && (
+        <img src={qrCodeUrl} />
+      )}
+      <div className="server-configs">
+        <div>
+          <span>{'🚀 API server is running at '}</span>
+          <a
+            href="http://localhost:8081"
+            onClick={e => {
+              e.preventDefault()
+              window.open('http://localhost:8081')
+            }}
+          >PORT 8081</a>
+        </div>
         {interfaceKey && (
           <select value={interfaceKey} onChange={e => setInterfaceKey(e.target.value)}>
             {ipv4NetworkInterfaceKeys.map(key => (
@@ -73,7 +84,6 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
             ))}
           </select>
         )}
-      </div>
       <label>
         <input
           type="text"
@@ -85,32 +95,41 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
           value={serverConfig.dataPath}
           readOnly
         />
-        <button
-          onClick={() => {
-            socket.emit('@change-data-path')
-          }}
-        >
-          {'Set data path'}
-        </button>
-      </label>
+          <button
+            onClick={() => {
+              socket.emit('@change-data-path')
+            }}
+          >
+            {'Set data path'}
+          </button>
+        </label>
+      </div>
     </div>
   )
 }
 const StyledConfigManager = styled(ConfigManager)`
-  width: 100%;
+  display: flex;
+  margin: 0.4rem;
+  gap: 0.4rem;
+  width: calc(100% - 0.8rem);
 
-  label {
+  .server-configs {
+    flex-grow: 1;
+    flex-basis: 0;
     display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: baseline;
 
-    input {
-      flex-grow: 1;
+    label {
+      display: flex;
+      width: 100%;
+
+      input {
+        flex-grow: 1;
+        cursor: pointer;
+      }
     }
-  }
-
-  .network-config {
-    display: flex;
-    justify-content: center;
-    align-items: center;
   }
 `
 

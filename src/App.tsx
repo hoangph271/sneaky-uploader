@@ -21,33 +21,33 @@ const useServerState = () => {
 const App: FC<StyledProp> = ({ className }) => {
   const { serverState } = useServerState()
 
+  if (serverState === ServerState.OFFLINE) {
+    return (
+      <span className={`offline-banner ${className}`}>
+        {'API server offline...! 🚧'}
+      </span>
+    )
+  }
+
   return (
     <div className={className}>
-      {serverState === ServerState.OFFLINE ? (
-        <span>{'API server offline...!'}</span>
-      ) : (
-        <div className="main-ui">
-          <div>
-            <span>{'🚀 API server is running at '}</span>
-            <a
-              href="http://localhost:8081"
-              onClick={e => {
-                e.preventDefault()
-                window.open('http://localhost:8081')
-              }}
-            >PORT 8081</a>
-          </div>
-          <ConfigManager />
-          <hr />
-          <UploadDashboard />
-        </div>
-      )}
+      <div className="main-ui">
+        <ConfigManager />
+        <UploadDashboard />
+      </div>
     </div>
   )
 }
 
 const StyledApp = styled(App)`
   padding: 0 0.2rem;
+
+  &.offline-banner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
 
   .main-ui {
     display: flex;

@@ -24,7 +24,12 @@ const UploadDashboard: FC<StyledProp> = ({ className }) => {
 
   if (!fileUploads.size) {
     return (
-      <div>{'No upload...! 🤔'}</div>
+      <div
+        className={className}
+        style={{ justifyContent: 'center', alignItems: 'center' }}
+      >
+        {'No upload...! 🤔'}
+        </div>
     )
   }
 
@@ -61,7 +66,9 @@ const StyledUploadDashboard = styled(UploadDashboard)`
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  width: 100%;
+  width: calc(100% - 0.8rem);
+  border: 1px solid lightgray;
+  margin: 0.4rem;
 
   .upload-list {
     flex-basis: 0;

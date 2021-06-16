@@ -16,7 +16,7 @@ const createWindow = (): void => {
     return { action: 'deny' }
   })
 
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 
   startServer()
 }

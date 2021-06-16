@@ -128,7 +128,7 @@ export function startServer (): void {
         })
     })
 
-    busboy.once('finish', () => res.redirect('/'))
+    busboy.once('finish', () => res.sendStatus(201))
 
     req.pipe(busboy)
   })
