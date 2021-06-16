@@ -1,12 +1,13 @@
 import os from 'os'
 import { Router } from 'express'
+import HttpStatus from 'http-status'
 
 function createRouter (): Router {
   const router = Router()
 
   router.get('/', (_, res) => {
     res.send({
-      code: 200,
+      code: HttpStatus.OK,
       pcName: os.hostname(),
     })
   })

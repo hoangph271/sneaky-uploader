@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import Busboy from 'busboy'
 import { Router } from 'express'
+import HttpStatus from 'http-status'
 import { ConfigManager } from '../config-manager'
 import { FileUploadProgress } from '../../types'
 import { Socket } from 'socket.io'
@@ -22,35 +23,38 @@ function createRouter (createRouterParams: createRouterParams): Router {
         socket.emit('@file-upload-changed', fileUploadProgress)
       })
     }
-  
-    busboy.on('file', (_fieldname, file, filename) => {
-      console.info(`Uploading ${filename}...!`)
-      const dataPath = ConfigManager.getDataPath()
-      // TODO: Async it
-      if (!fs.existsSync(dataPath)) {
-        fs.mkdirSync(dataPath)
-      }
-  
-      const filePath = path.join(dataPath, filename)
-      const ws = fs.createWriteStream(filePath)
 
+    busboy.on('file', (_fieldname, file, filename) => {
+      const dataPath = ConfigManager.getDataPath()
       const deviceDetail = req.jwtPayload
 
+      // TODO: Async it, or use a fs watcher
+      if (!fs.existsSync(dataPath)) fs.mkdirSync(dataPath)
+
+      const userDir = path.join(dataPath, deviceDetail.deviceId)
+      const filePath = path.join(userDir, filename)
+
+      // TODO: Async it, or use a fs watcher
+      if (!fs.existsSync(userDir)) fs.mkdirSync(userDir)
+
+      const ws = fs.createWriteStream(filePath)
+
       notifyFileUploadChanged({ filename, progress: 0, filePath, deviceDetail })
+      console.info(`Uploading ${filePath}...!`)
   
       file
         .pipe(ws)
         .once('finish', () => {
-          console.info(`Uploaded ${filename}...!`)
+          console.info(`Uploaded ${filePath}...!`)
           notifyFileUploadChanged({ filename, progress: 100, filePath, deviceDetail })
         })
         .once('error', () => {
-          console.info(`Failed ${filename}...!`)
+          console.info(`Failed ${filePath}...!`)
           notifyFileUploadChanged({ filename, progress: -1, filePath, deviceDetail })
         })
     })
   
-    busboy.once('finish', () => res.sendStatus(201))
+    busboy.once('finish', () => res.sendStatus(HttpStatus.CREATED))
   
     req.pipe(busboy)
   })
