@@ -68,13 +68,13 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
         <div>
           <span>{'🚀 API server is running at '}</span>
           <a
-            href="http://localhost:8081"
+            href="http://localhost:5555"
             onClick={e => {
               e.preventDefault()
 
               socket.emit('@open-upload-page')
             }}
-          >PORT 8081</a>
+          >PORT 5555</a>
         </div>
         {interfaceKey && (
           <select value={interfaceKey} onChange={e => setInterfaceKey(e.target.value)}>
