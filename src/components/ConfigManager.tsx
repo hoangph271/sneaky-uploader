@@ -90,7 +90,7 @@ const ConfigManager: FC<StyledProp> = ({ className }) => {
           style={{ cursor: 'pointer' }}
           onClick={(e) => {
             e.preventDefault()
-            window.open(`file://${serverConfig.dataPath}`)
+            socket.emit('@open-data-path')
           }}
           value={serverConfig.dataPath}
           readOnly
