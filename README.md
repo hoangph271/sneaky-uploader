@@ -17,6 +17,11 @@ You can scan the QR Code for server configs
 `POST` `http://localhost:8081/images` with `multipart/form-data` body to upload files  
 (multiple file uploading is also supported)
 
+Remember to provide `Authorization` header as well:  
+<img width="1296" alt="Screen Shot 2021-06-16 at 20 15 42" src="https://user-images.githubusercontent.com/39024711/122225884-a834e600-cedf-11eb-8120-99c4d7197719.png">
+
+The `JWT` payload must have `deviceId` & `deviceName` fields
+
 ---
 
 ## Web UI for testing
