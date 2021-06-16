@@ -140,7 +140,6 @@ export function startServer (): void {
 
   const notifyFileUploadChanged = (fileUploadProgress: FileUploadProgress) => {
     forEachSocket(socket => {
-      console.info('@file-upload-changed', `${fileUploadProgress.filename} - ${fileUploadProgress.progress}`)
       socket.emit('@file-upload-changed', fileUploadProgress)
     })
   }
