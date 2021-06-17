@@ -16,7 +16,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: macos-app
-          path: out/make/zip/darwin/arm64/*.zip
+          path: out/make/zip/darwin/x64/*.zip
   build_4_windows:
     runs-on: windows-latest
     steps:
