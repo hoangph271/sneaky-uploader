@@ -7,6 +7,7 @@ import { ConfigManager } from '../config-manager'
 import { FileUploadProgress } from '../../types'
 import { Socket } from 'socket.io'
 import { jwtVerifier, ReqWithJwtPayload } from '../middlewares'
+import { jsonRes } from '../responder'
 
 type createRouterParams = {
   toAllSockets(fn: (socket: Socket) => void): void
@@ -54,7 +55,11 @@ function createRouter (createRouterParams: createRouterParams): Router {
         })
     })
   
-    busboy.once('finish', () => res.sendStatus(HttpStatus.CREATED))
+    busboy.once('finish', () => {
+      jsonRes(res, {
+        status: HttpStatus.CREATED
+      })
+    })
   
     req.pipe(busboy)
   })

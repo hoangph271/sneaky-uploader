@@ -2,8 +2,9 @@ import HttpStatus from 'http-status'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '../constants'
 
-import type { Request, Response, NextFunction } from 'express'
+import { Request, Response, NextFunction, json } from 'express'
 import type { JwtPayload } from '../../types'
+import { jsonRes } from '../responder'
 
 export type ReqWithJwtPayload = { jwtPayload: JwtPayload } & Request
 
@@ -11,23 +12,25 @@ export function jwtVerifier (req: ReqWithJwtPayload, res: Response, next: NextFu
   const token = (req.headers.authorization ?? '').substring('Bearer '.length)
 
   if (!token) {
-    res.sendStatus(HttpStatus.UNAUTHORIZED)
+    jsonRes(res, { status: HttpStatus.UNAUTHORIZED })
     return
   }
 
   jwt.verify(token, JWT_SECRET, (err, payload: JwtPayload) => {
     if (err) {
       console.error(err)
-      res
-        .status(HttpStatus.UNAUTHORIZED)
-        .send(err.message)
+      jsonRes(res, {
+        status: HttpStatus.UNAUTHORIZED,
+        message: err.message
+      })
       return
     }
 
     if (!payload.deviceId || !payload.deviceName) {
-      res
-        .status(HttpStatus.FORBIDDEN)
-        .send('Please provide a JWT with `deviceId` & `deviceName` included')
+      jsonRes(res, {
+        status: HttpStatus.FORBIDDEN,
+        message: 'Please provide a JWT with `deviceId` & `deviceName` included'
+      })
       return
     }
 
