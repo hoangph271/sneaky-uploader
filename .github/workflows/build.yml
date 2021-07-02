@@ -2,8 +2,23 @@ name: Build
 on: [pull_request, workflow_dispatch]
 
 jobs:
-  # build_4_macos:
-  #   runs-on: macos-latest
+  build_4_macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@master
+        with:
+          node-version: 16
+      - name: install dependencies
+        run: yarn
+      - name: build
+        run: yarn make --arch=arm64
+      - uses: actions/upload-artifact@v2
+        with:
+          name: macos-app
+          path: out/make/zip/darwin/x64/*.zip
+  # build_4_windows:
+  #   runs-on: windows-latest
   #   steps:
   #     - uses: actions/checkout@v2
   #     - uses: actions/setup-node@master
@@ -15,20 +30,5 @@ jobs:
   #       run: yarn make
   #     - uses: actions/upload-artifact@v2
   #       with:
-  #         name: macos-app
-  #         path: out/make/zip/darwin/x64/*.zip
-  build_4_windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@master
-        with:
-          node-version: 16
-      - name: install dependencies
-        run: yarn
-      - name: build
-        run: yarn make
-      - uses: actions/upload-artifact@v2
-        with:
-          name: windows-app
-          path: out\make\squirrel.windows\x64\*.exe
+  #         name: windows-app
+  #         path: out\make\squirrel.windows\x64\*.exe
