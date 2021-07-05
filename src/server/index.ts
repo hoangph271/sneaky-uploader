@@ -6,6 +6,7 @@ import cors from 'cors'
 import express from 'express'
 import { dialog, shell } from 'electron'
 import { Server, Socket } from 'socket.io'
+import cookieParser from 'cookie-parser'
 import { SERVER_PORT } from './constants'
 import { ConfigManager } from './config-manager'
 import * as routers from './routers'
@@ -31,6 +32,7 @@ export function startServer (): void {
   })
 
   app.use(cors())
+  app.use(cookieParser())
 
   app.use('/', routers.indexRouter())
   app.use('/status', routers.statusRouter())
