@@ -43,6 +43,7 @@ function createRouter (): Router {
           <title>Sneaky Uploader...!</title>
         </head>
         <body>
+          <h4>Sign in</h4>
           <form action="/sign-in" method="POST" enctype="application/x-www-form-urlencoded">
             <input type="password" name="jwt">
             <button type="submit">Sign in</button>
@@ -62,13 +63,19 @@ function createRouter (): Router {
         <title>Sneaky Uploader...!</title>
       </head>
       <body>
+        <h4>Upload file</h4>
         <form action="images" method="POST" enctype="multipart/form-data">
-          <input type="file" name="file" id="file" required multiple>
-          <button type="submit">Upload</button>
-          <div>
-            <a href="/sign-out">Sign out</a>
-          </div>
+          <input type="file" name="file" required multiple>
+          <button type="submit">Upload file</button>
         </form>
+        <h4>Upload URL</h4>
+        <form action="images/url" method="POST" enctype="application/x-www-form-urlencoded">
+          <input type="text" name="url" required>
+          <button type="submit">Upload url</button>
+        </form>
+        <div>
+          <a href="/sign-out">Sign out</a>
+        </div>
       </body>
       </html>
     `)
